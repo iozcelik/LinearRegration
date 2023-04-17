@@ -1,0 +1,61 @@
+var xValues = [5, 43, 55, 28, 11, 36];
+var yValues = [-6.72, -6.8, -7.5, -7, -6.96, -6.73];
+
+var [rSquared, formula] = linearRegression(xValues, yValues, true);
+
+console.log(rSquared);
+console.log(formula);
+
+function linearRegression(xValues, yValues, isConstantZero) {
+  var length = xValues.length;
+  var sumCodeviates = 0;
+  var sumOfXSq = 0;
+  var sumOfYSq = 0;
+  var sumOfX = 0;
+  var sumOfY = 0;
+  var rSquared = 0;
+
+  for (var i = 0; i < length; i++) {
+    var x = xValues[i];
+    var y = yValues[i];
+    sumCodeviates += x * y;
+    sumOfXSq += x * x;
+    sumOfYSq += y * y;
+    sumOfX += x;
+    sumOfY += y;
+  }
+
+  var meanX = sumOfX / length;
+  var meanY = sumOfY / length;
+
+  if (isConstantZero) {
+    var slope = (sumCodeviates / sumOfXSq).toFixed(5);
+    var yIntercept = 0;
+    rSquared =
+      (sumOfYSq - (sumOfYSq - (sumCodeviates * sumCodeviates) / sumOfXSq)) /
+      sumOfYSq;
+  } else {
+    var slope = (
+      (length * sumCodeviates - sumOfX * sumOfY) /
+      (length * sumOfXSq - sumOfX * sumOfX)
+    ).toFixed(5);
+    var yIntercept = (meanY - slope * meanX).toFixed(5);
+
+    var rNumerator = length * sumCodeviates - sumOfX * sumOfY;
+    var rDenom =
+      (length * sumOfXSq - sumOfX * sumOfX) *
+      (length * sumOfYSq - sumOfY * sumOfY);
+    var dblR = rNumerator / Math.sqrt(rDenom);
+    rSquared = dblR * dblR;
+  }
+
+  var formula = "";
+  if (yIntercept == 0) {
+    formula = "y=" + slope + "x ";
+  } else if (yIntercept < 0) {
+    formula = "y=" + slope + "x - " + yIntercept * -1;
+  } else if (yIntercept > 0) {
+    formula = "y=" + slope + "x + " + yIntercept;
+  }
+  return [rSquared.toFixed(5), formula];
+}
